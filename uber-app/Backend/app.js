@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
   res.send('App run sucessfully');
 });
 
+
 app.use('/users', userRoutes);
 
 module.exports = app;

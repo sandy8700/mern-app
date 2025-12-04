@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+// import CaptainContext  from "../context/CaptainContext";
 
 const CaptainSignup = () => {
   const navigate = useNavigate();
@@ -10,44 +11,60 @@ const CaptainSignup = () => {
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [licenseNumber, setLicenseNumber] = useState("");
-  const [vehicleMake, setVehicleMake] = useState("");
-  const [vehicleModel, setVehicleModel] = useState("");
-  const [vehiclePlate, setVehiclePlate] = useState("");
-
+  const [color, setColor] = useState("");
+  const [plate, setPlate] = useState("");
+  const [capacity, setCapacity] = useState("");
+  const [vehicleType, setVehicleType] = useState("");
+  // const { setCaptain } = React.useContext(CaptainContext);
+const capitalizeCase = (str) =>
+  str.replace(/\b\w/g, (c) => c.toUpperCase());
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const fullName = firstname + " " + lastname;
 
     const captainData = {
-      name: fullName,
+      fullname: {
+        firstname,
+        lastname,
+      },
       email,
       password,
-      licenseNumber,
       vehicle: {
-        make: vehicleMake,
-        model: vehicleModel,
-        plate: vehiclePlate,
+        color,
+        plate,
+        capacity,
+        vehicleType: vehicleType === "moto" ? "motorcycle" : vehicleType, // Correct vehicle type
       },
+      location: {
+        ltd: 0, // Default to 0
+        lng: 0, // Default to 0
+      },
+      status: "inactive",
     };
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/captains/signup`,
+        `${import.meta.env.VITE_BASE_URL}/captains/register`,
         captainData
       );
-      const { token } = response.data || {};
-      if (token) {
-        localStorage.setItem("token", token);
+      if (response.status === 201) {
+        const data = response.data;
+        // setCaptain(data.captain);
+        localStorage.setItem("token", data.token);
+        toast.success("Captain signup successful!");
+
+        setTimeout(() => navigate("/captain-home"), 600);
       }
-      toast.success("Captain signup successful!");
-      setTimeout(() => navigate("/captain-login"), 600);
     } catch (error) {
-      console.error("Captain signup error:", error);
-      toast.error("Signup failed. Check console for details.");
+      console.error(
+        "Captain signup error:",
+        error.response?.data || error.message
+      );
+      toast.error(
+        error.response?.data?.message ||
+          "Signup failed. Check console for details."
+      );
     }
   };
-
   return (
     <div>
       <div className="p-7 h-screen flex flex-col justify-between">
@@ -60,7 +77,9 @@ const CaptainSignup = () => {
           <ToastContainer />
 
           <form onSubmit={handleSubmit}>
-            <h3 className="text-lg w-1/2  font-medium mb-2">What's your name</h3>
+            <h3 className="text-lg w-1/2  font-medium mb-2">
+              What's your name
+            </h3>
             <div className="flex gap-4 mb-7">
               <input
                 required
@@ -68,7 +87,7 @@ const CaptainSignup = () => {
                 type="text"
                 placeholder="First name"
                 value={firstname}
-                onChange={(e) => setFirstname(e.target.value)}
+                onChange={(e) => setFirstname(capitalizeCase(e.target.value))}
               />
               <input
                 required
@@ -76,7 +95,7 @@ const CaptainSignup = () => {
                 type="text"
                 placeholder="Last name"
                 value={lastname}
-                onChange={(e) => setLastname(e.target.value)}
+                onChange={(e) => setLastname(capitalizeCase(e.target.value))}
               />
             </div>
 
@@ -100,39 +119,46 @@ const CaptainSignup = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <h3 className="text-lg font-medium mb-2">License Number</h3>
-            <input
-              className="bg-[#eeeeee] mb-7 rounded-sm px-4 py-2 w-full text-lg placeholder:text-base"
-              required
-              type="text"
-              placeholder="Driver license number"
-              value={licenseNumber}
-              onChange={(e) => setLicenseNumber(e.target.value)}
-            />
-
             <h3 className="text-lg font-medium mb-2">Vehicle Details</h3>
             <div className="flex gap-4 mb-7">
               <input
-                className="bg-[#eeeeee] w-1/3 rounded-sm px-4 py-2  text-lg placeholder:text-base"
+                className="bg-[#eeeeee] w-1/2 rounded-sm px-4 py-2  text-lg placeholder:text-base"
                 type="text"
-                placeholder="Make"
-                value={vehicleMake}
-                onChange={(e) => setVehicleMake(e.target.value)}
+                placeholder="color"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
               />
               <input
-                className="bg-[#eeeeee] w-1/3 rounded-sm px-4 py-2  text-lg placeholder:text-base"
+                className="bg-[#eeeeee] w-1/2 rounded-sm px-4 py-2  text-lg placeholder:text-base"
                 type="text"
-                placeholder="Model"
-                value={vehicleModel}
-                onChange={(e) => setVehicleModel(e.target.value)}
+                placeholder="plate"
+                value={plate}
+                onChange={(e) => setPlate(e.target.value.toUpperCase())}
               />
+            </div>
+            <div className="flex gap-4 mb-7">
               <input
-                className="bg-[#eeeeee] w-1/3 rounded-sm px-4 py-2  text-lg placeholder:text-base"
+                className="bg-[#eeeeee] w-1/2 rounded-sm px-4 py-2  text-lg placeholder:text-base"
                 type="text"
-                placeholder="Plate"
-                value={vehiclePlate}
-                onChange={(e) => setVehiclePlate(e.target.value)}
+                placeholder="Capacity"
+                value={capacity}
+                onChange={(e) => setCapacity(e.target.value)}
               />
+              <select
+                required
+                className="bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border text-lg placeholder:text-base"
+                value={vehicleType}
+                onChange={(e) => {
+                  setVehicleType(e.target.value);
+                }}
+              >
+                <option value="" disabled>
+                  Select Vehicle Type
+                </option>
+                <option value="car">Car</option>
+                <option value="auto">Auto</option>
+                <option value="moto">Moto</option>
+              </select>
             </div>
 
             <button className="bg-[#111] text-white font-semibold mb-3 rounded-sm px-4 py-2 w-full text-lg placeholder:text-base">
@@ -141,7 +167,7 @@ const CaptainSignup = () => {
           </form>
 
           <p className="text-center">
-            Already have a account?{' '}
+            Already have a account?{" "}
             <Link to="/captain-login" className="text-blue-600">
               Login here
             </Link>
@@ -149,8 +175,8 @@ const CaptainSignup = () => {
         </div>
         <div>
           <p className="text-[10px] leading-tight">
-            This site is protected by reCAPTCHA and the{' '}
-            <span className="underline">Google Privacy Policy</span> and{' '}
+            This site is protected by reCAPTCHA and the{" "}
+            <span className="underline">Google Privacy Policy</span> and{" "}
             <span className="underline">Terms of Service apply</span>.
           </p>
         </div>

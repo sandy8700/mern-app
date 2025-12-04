@@ -174,7 +174,7 @@ const UserLogin = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 px-2  text-sm rounded"
+                  className="absolute right-2 top-1/12 translate-y-1/2 px-2  text-sm rounded"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? "Hide" : "Show"}

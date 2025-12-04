@@ -19,7 +19,7 @@ const UserSignup = () => {
     const userData = { name: fullName, email, password };
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/users/signup`,
+        `${import.meta.env.VITE_BASE_URL}/users/register`,
         userData
       );
       console.log(response.data);

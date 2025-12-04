@@ -3,7 +3,7 @@ node_modules
 .gitignore
 Backend/.env
 Frontend/.env
-
+.env
 # Logs
 logs
 *.log

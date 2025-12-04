@@ -16,8 +16,9 @@ const CaptainSignup = () => {
   const [capacity, setCapacity] = useState("");
   const [vehicleType, setVehicleType] = useState("");
   // const { setCaptain } = React.useContext(CaptainContext);
-const capitalizeCase = (str) =>
-  str.replace(/\b\w/g, (c) => c.toUpperCase());
+  const capitalizeCase = (str) => str.replace(/\b\w/g, (c) => c.toUpperCase());
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -52,7 +53,7 @@ const capitalizeCase = (str) =>
         localStorage.setItem("token", data.token);
         toast.success("Captain signup successful!");
 
-        setTimeout(() => navigate("/captain-home"), 600);
+        setTimeout(() => navigate("/captain-dashboard"), 600);
       }
     } catch (error) {
       console.error(
